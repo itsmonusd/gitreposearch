@@ -79,7 +79,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, isLoading }) => {
       <Box
         component="form"
         noValidate
-        sx={{ width: "66%" }}
+        sx={{ width: "69%" }}
         autoComplete="off"
         onSubmit={handleSubmit}
       >

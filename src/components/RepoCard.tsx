@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 import { Stack, styled } from "@mui/system";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-// import StarIcon from "@mui/icons-material/Star";
+import StarIcon from "@mui/icons-material/Star";
 import React from "react";
-import { Repo } from "../interfaces/repo";
+import { Repo } from "../app/interfaces/repo";
 
 const StyledCard = styled(Card)({
   borderRadius: "16px",
@@ -39,9 +39,11 @@ const StyledCard = styled(Card)({
 
 interface RepoProps {
     item: Repo;
+    handleAddToFav:(item:Repo)=>void;
+    isFav:boolean;
 }
 
-const RepoCard: React.FC<RepoProps> = ({item}) => {
+const RepoCard: React.FC<RepoProps> = ({item, handleAddToFav, isFav}) => {
   return (
     <StyledCard>
       <ListItem alignItems="flex-start">
@@ -72,7 +74,7 @@ const RepoCard: React.FC<RepoProps> = ({item}) => {
           }
         />
         <IconButton>
-          <StarBorderIcon />
+            { !isFav ? <StarBorderIcon onClick={()=>handleAddToFav(item)} /> : <StarIcon sx={{ color: "#f5bc42" }} onClick={()=>handleAddToFav(item)} /> }
         </IconButton>
       </ListItem>
     </StyledCard>
