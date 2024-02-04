@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import SearchBar from "./components/Search";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import GithubSvg from "./components/assets/GithubSvg";
 import RepoCard from "./components/RepoCard";
 import { Repo } from "./interfaces/repo";
@@ -33,7 +33,7 @@ const MainPage: React.FC = () => {
     items: [],
     total_count: 0,
   });
-  
+
   // search for repo
   const handleSearch = async (query: string) => {
     setLoading(true);

@@ -1,6 +1,5 @@
 import './App.css';
 import MainPage from './MainPage';
-import NavBar from './components/Search';
 
 function App() {
   return (

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Stack, styled } from "@mui/system";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-import StarIcon from "@mui/icons-material/Star";
+// import StarIcon from "@mui/icons-material/Star";
 import React from "react";
 import { Repo } from "../interfaces/repo";
 
