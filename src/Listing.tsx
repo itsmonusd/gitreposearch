@@ -121,7 +121,7 @@ const Listing: React.FC = () => {
                 </Typography>
               </Grid>
             )}
-            {!isLoading && (
+            {!isLoading && repos.total_count !== 0 && (
               <Grid item xs={6}>
                 <StyledLink to="/favorites">Favourite Repo</StyledLink>
               </Grid>
