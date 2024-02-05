@@ -10,6 +10,7 @@ import { Box, LinearProgress } from "@mui/material";
 interface SearchBarProps {
   handleSearch: (query: string) => void;
   isLoading: boolean;
+  queryInput:string;
 }
 
 const CustomTextField = styled(TextField)({
@@ -49,8 +50,8 @@ const debounce = (func: Function, delay: number) => {
   };
 };
 
-const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, isLoading }) => {
-  const [searchInput, setSearchInput] = useState<string>("");
+const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, isLoading, queryInput }) => {
+  const [searchInput, setSearchInput] = useState<string>(queryInput || "");
 
   const debouncedSearch = useCallback(
     debounce((value: string) => {

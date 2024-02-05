@@ -1,10 +1,12 @@
 import './App.css';
-import MainPage from './MainPage';
-
+import AppRoutes from './app/routes';
+import { AppProvider } from "./AppContext";
 function App() {
   return (
     <div className="App">
-      <MainPage />
+      <AppProvider>
+        <AppRoutes />
+      </AppProvider>
     </div>
   );
 }

@@ -1,14 +1,23 @@
+import React, { useEffect, useState } from "react";
+import { useAppState, useAppDispatch, setSearchResults, setSearchQuery } from "./AppContext";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { Grid, Link, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import SearchBar from "./components/Search";
-import React, { useState } from "react";
 import GithubSvg from "./app/assets/GithubSvg";
 import RepoCard from "./components/RepoCard";
 import { Repo } from "./app/interfaces/repo";
-import { STORAGE } from "./app/services/localstorage.services";
+import { STORAGE } from "./app/services/sessionStorage.services";
 import { formatNumber } from "./app/utils/number.utils";
+import { Link, useLocation } from "react-router-dom";
+import { styled } from "@mui/system";
+
+const StyledLink = styled(Link)({
+  float: "right",
+  cursor: "pointer",
+  color:"#009aff"
+});
 
 const fetchRepositories = async (
   query: string
@@ -28,39 +37,49 @@ const fetchRepositories = async (
   }
 };
 
-const MainPage: React.FC = () => {
+const Listing: React.FC = () => {
+  const state = useAppState();
+  const dispatch = useAppDispatch();
+  const location = useLocation();
   const [isLoading, setLoading] = useState<boolean>(false);
   const [repos, setRepos] = useState<{ items: Repo[]; total_count: number }>({
     items: [],
     total_count: 0,
   });
-  const [favRepo, setFavRepo] = useState<number[]>([]);
-
+  const [favRepo, setFavRepo] = useState<Repo[]>(STORAGE.get("favorite", { parse: true }) || []);
+  const storedQuery = state.searchQuery;
+  
   // search for repo
   const handleSearch = async (query: string) => {
     setLoading(true);
-    const data = await fetchRepositories(query);
-    setRepos({
-      items: data.items,
-      total_count: data.total_count,
-    });
+    if(query.trim()!==""){
+      const data = await fetchRepositories(query);
+        setRepos({
+          items: data.items,
+          total_count: data.items.length,
+        });
+        // Dispatching the search results and query to context
+        dispatch(setSearchResults(data.items));
+        dispatch(setSearchQuery(query));
+    }else if (state.searchResults.length > 0 && storedQuery) {
+      // Use stored data directly
+      setRepos({
+        items: state.searchResults,
+        total_count: state.searchResults.length,
+      });
+    }
     setLoading(false);
   };
 
+  useEffect(() => {
+    handleSearch("");
+  }, [location.pathname]); 
+
   //   handle add to fav
   const handleAddToFav = (item: Repo) => {
-    let newFavs = [...favRepo];
-    const isExist = favRepo.some((i) => i == item.id);
-    if (!isExist) {
-      newFavs.push(item.id);
-    } else {
-      newFavs = favRepo.filter((i) => i != item.id);
-    }
+    const newFavs = favRepo.some((i) => i.id === item.id) ? favRepo.filter((i) => i.id !== item.id)  : [...favRepo, item];
     setFavRepo(newFavs);
-    const getFullDetails = repos?.items.filter((data) =>
-      newFavs.includes(data.id)
-    );
-    STORAGE.set("favorite", JSON.stringify(getFullDetails));
+    STORAGE.set("favorite", JSON.stringify(newFavs));
   };
 
   return (
@@ -71,7 +90,7 @@ const MainPage: React.FC = () => {
           <Box sx={{ marginBottom: "20px" }}>
             <GithubSvg />
           </Box>
-          <SearchBar handleSearch={handleSearch} isLoading={isLoading} />
+          <SearchBar handleSearch={handleSearch} isLoading={isLoading} queryInput={storedQuery} />
           {!isLoading && repos.items?.length === 0 && (
             <>
               <Typography sx={{ marginTop: "30px" }}>
@@ -104,7 +123,7 @@ const MainPage: React.FC = () => {
             )}
             {!isLoading && (
               <Grid item xs={6}>
-                <Link sx={{ float: "right", cursor:"pointer" }}>Favourite Repo</Link>
+                <StyledLink to="/favorites">Favourite Repo</StyledLink>
               </Grid>
             )}
           </Grid>
@@ -117,12 +136,12 @@ const MainPage: React.FC = () => {
             {!isLoading &&
               repos.items?.length > 0 &&
               repos.items.map((item) => (
-                <Grid item xs={4} sm={4} md={6}>
+                <Grid item xs={4} sm={4} md={6} key={item.id}>
                   <RepoCard
-                    key={item.id}
                     item={item}
                     handleAddToFav={handleAddToFav}
-                    isFav={favRepo.includes(item.id)}
+                    isFavActive={favRepo.map((item)=>item.id).includes(item.id)}
+                    isFavoriteCard={true}
                   />
                 </Grid>
               ))}
@@ -133,4 +152,4 @@ const MainPage: React.FC = () => {
   );
 };
 
-export default MainPage;
+export default Listing;
