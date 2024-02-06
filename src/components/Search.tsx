@@ -8,7 +8,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { Box, LinearProgress } from "@mui/material";
 
 interface SearchBarProps {
-  handleSearch: (query: string) => void;
+  handleSearch: (query: string, isSearch:boolean) => void;
   isLoading: boolean;
   queryInput:string;
 }
@@ -55,14 +55,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, isLoading, queryInp
 
   const debouncedSearch = useCallback(
     debounce((value: string) => {
-      handleSearch(value);
+      handleSearch(value,true);
     }, 300),
     [handleSearch]
   );
 
   const handleClearClick = () => {
     setSearchInput("");
-    handleSearch(""); // Clear search on clear button click
+    handleSearch("",true); // Clear search on clear button click
   };
 
   const handleOnChangeInput = (event: ChangeEvent<HTMLInputElement>) => {

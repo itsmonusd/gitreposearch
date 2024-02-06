@@ -50,9 +50,9 @@ const Listing: React.FC = () => {
   const storedQuery = state.searchQuery;
   
   // search for repo
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (query: string,isSearch:boolean=false) => {
     setLoading(true);
-    if(query.trim()!==""){
+    if(isSearch){
       const data = await fetchRepositories(query);
         setRepos({
           items: data.items,
